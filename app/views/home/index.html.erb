@@ -1,0 +1,80 @@
+<!-- Hero Section -->
+<section class="bg-dark text-white text-center py-5" style="background: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;">
+  <div class="bg-dark bg-opacity-50 py-5">
+    <div class="container py-5">
+      <h1 class="display-4 fw-bold">Welcome to Orchid Oasis</h1>
+      <p class="lead mb-4">Where every meal blossoms with flavor and elegance.</p>
+      <% if current_user %>
+        <%= link_to "Reserve a Table", reservations_path, class: "btn btn-primary btn-lg" %>
+      <% else %>
+        <%= link_to "Book a Reservation", signup_path, class: "btn btn-primary btn-lg me-2" %>
+        <%= link_to "Login", login_path, class: "btn btn-outline-light btn-lg" %>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">Experience the Essence of Fine Dining</h2>
+    <p class="text-muted fs-5 mb-5">
+      Nestled in the heart of the city, Orchid Oasis offers a serene dining experience inspired by nature’s beauty.
+      Our chefs craft exquisite dishes that combine contemporary flair with timeless taste.
+    </p>
+
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <img src="https://images.unsplash.com/photo-1600891963938-5e4e3e02b96a?auto=format&fit=crop&w=900&q=80" class="card-img-top" alt="Fine Dining">
+          <div class="card-body">
+            <h5 class="card-title">Gourmet Cuisine</h5>
+            <p class="card-text text-muted">Savor culinary masterpieces crafted from the freshest ingredients and global inspiration.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=900&q=80" class="card-img-top" alt="Elegant Ambience">
+          <div class="card-body">
+            <h5 class="card-title">Elegant Ambience</h5>
+            <p class="card-text text-muted">Dine surrounded by lush floral design and soothing tones, where every table feels special.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <img src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=900&q=80" class="card-img-top" alt="Unforgettable Moments">
+          <div class="card-body">
+            <h5 class="card-title">Unforgettable Moments</h5>
+            <p class="card-text text-muted">Celebrate birthdays, anniversaries, and milestones with warmth and elegance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-light py-5 text-center">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Reserve Your Table at Orchid Oasis</h3>
+    <p class="text-muted mb-4">Escape the ordinary — book your table and enjoy an evening of exquisite dining.</p>
+    <% if current_user %>
+      <%= link_to "Make a Reservation", reservations_path, class: "btn btn-success btn-lg px-4" %>
+    <% else %>
+      <%= link_to "Sign Up", signup_path, class: "btn btn-success btn-lg me-2 px-4" %>
+      <%= link_to "Login", login_path, class: "btn btn-outline-secondary btn-lg px-4" %>
+    <% end %>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-4 mt-5">
+  <div class="container">
+    <p class="mb-1">&copy; <%= Time.now.year %> Orchid Oasis. All rights reserved.</p>
+    <small>Presented by Joshua F. Napiñas</small>
+  </div>
+</footer>

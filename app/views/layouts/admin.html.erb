@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+  <title>Admin</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+</head>
+<body>
+  <div class="d-flex">
+    <aside class="bg-light p-3" style="width: 220px; min-height: 100vh;">
+      <h5>Admin</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item"><%= link_to "Dashboard", admin_dashboard_path, class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to "Reservations", admin_reservations_path, class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to "Users", admin_users_path, class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to "Logout", logout_path, method: :delete, class: "nav-link" %></li>
+      </ul>
+    </aside>
+
+    <main class="p-4 flex-grow-1">
+      <% flash.each do |k, v| %>
+        <div class="alert alert-<%= k == "notice" ? "success" : "danger" %>"><%= v %></div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </div>
+</body>
+</html>
