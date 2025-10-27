@@ -1,0 +1,41 @@
+<div class="container mt-5">
+  <h1>Edit Reservation</h1>
+
+  <%= form_with(model: [:admin, @reservation], local: true) do |form| %>
+    <div class="mb-3">
+      <%= form.label :date %>
+      <%= form.date_field :date, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :time_slot_id, "Time Slot" %>
+      <%= form.select :time_slot_id, options_from_collection_for_select(TimeSlot.all, :id, ->(ts) { "#{ts.start_time.strftime('%I:%M %p')} - #{ts.end_time.strftime('%I:%M %p')}" }, @reservation.time_slot_id), { include_blank: "Select a time slot" }, class: "form-select" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :table_id, "Table" %>
+      <%= form.select :table_id, options_from_collection_for_select(Table.all, :id, :name, @reservation.table_id), { include_blank: "Select a table" }, class: "form-select" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :guest_count %>
+      <%= form.number_field :guest_count, min: 1, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :special_request, "Special Requests" %>
+      <%= form.text_area :special_request, rows: 3, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :status %>
+      <%= form.select :status, Reservation.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select" %>
+    </div>
+
+    <div class="d-grid">
+      <%= form.submit "Update Reservation", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+  <%= link_to "Back", admin_reservations_path, class: "btn btn-secondary mt-3" %>
+</div>

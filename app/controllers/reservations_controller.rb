@@ -1,6 +1,14 @@
 class ReservationsController < ApplicationController
   before_action :require_login
 
+  def calendar
+      @date = params[:date]&.to_date || Date.today
+      @time_slots = TimeSlot.order(:start_time)
+      @reservations_by_slot = current_user.reservations.where(date: @date)
+                                          .includes(:time_slot, :table)
+                                          .group_by(&:time_slot_id)
+  end
+
   def index
     @reservations = current_user.reservations.includes(:time_slot, :table).upcoming
   end

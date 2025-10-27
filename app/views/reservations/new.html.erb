@@ -1,0 +1,154 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title mb-4 text-center">Book a Reservation</h2>
+
+          <%= form_with model: @reservation, local: true, id: "reservation_form" do |form| %>
+            <!-- Date -->
+            <div class="mb-3">
+              <%= form.label :date, class: "form-label" %>
+              <%= form.date_field :date, value: @date, class: "form-control", id: "reservation_date" %>
+            </div>
+
+            <!-- Time Slot -->
+            <div class="mb-3">
+              <%= form.label :time_slot_id, "Time Slot", class: "form-label" %>
+              <%= form.select :time_slot_id, options_from_collection_for_select(@time_slots, :id, ->(ts) { "#{ts.start_time.strftime('%I:%M %p')} - #{ts.end_time.strftime('%I:%M %p')}" }, @time_slot_id), { include_blank: "Select a time slot" }, class: "form-select", id: "time_slot_select" %>
+            </div>
+
+            <!-- Guest Count -->
+            <div class="mb-3">
+              <%= form.label :guest_count, "Guest Count", class: "form-label" %>
+              <%= form.number_field :guest_count, min: 1, max: Table.maximum(:capacity), class: "form-control", id: "guest_count_input" %>
+            </div>
+
+            <!-- Tables -->
+            <div class="mb-3">
+            <%= form.select :table_id, 
+              options_from_collection_for_select(@available_tables, :id, :name), 
+              { include_blank: "Select a table (#{@available_tables.count} tables)" }, 
+              class: "form-select", id: "table_select" %>
+            </div>
+
+            <!-- Special Requests -->
+            <div class="mb-3">
+              <%= form.label :special_request, "Special Requests", class: "form-label" %>
+              <%= form.text_area :special_request, rows: 3, class: "form-control" %>
+            </div>
+
+            <!-- Contact Info (Read-only) -->
+            <div class="mb-3">
+              <label class="form-label">Contact Info</label>
+              <input type="text" class="form-control mb-2" value="<%= current_user.email %>" readonly>
+              <input type="text" class="form-control" value="<%= current_user.contact_number %>" readonly>
+            </div>
+
+            <div class="d-grid">
+              <!-- Use data-bs-toggle to open the modal declaratively -->
+              <button type="button" class="btn btn-primary" id="confirm_reservation_btn"
+                      data-bs-toggle="modal" data-bs-target="#confirmationModal">
+                Book Now
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Your Reservation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Date:</strong> <span id="confirm_date"></span></p>
+        <p><strong>Time:</strong> <span id="confirm_time"></span></p>
+        <p><strong>Guests:</strong> <span id="confirm_guests"></span></p>
+        <p><strong>Table:</strong> <span id="confirm_table"></span></p>
+        <p><strong>Special Requests:</strong> <span id="confirm_request"></span></p>
+        <p><strong>Email:</strong> <span><%= current_user.email %></span></p>
+        <p><strong>Contact Number:</strong> <span><%= current_user.contact_number %></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Edit</button>
+        <button type="button" class="btn btn-primary" id="submit_form_btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const dateInput = document.getElementById("reservation_date");
+  const timeSlotSelect = document.getElementById("time_slot_select");
+  const guestInput = document.getElementById("guest_count_input");
+  const tableSelect = document.getElementById("table_select");
+  const submitBtn = document.getElementById("submit_form_btn");
+
+  // Refresh page when date or time_slot changes to update available tables
+  [dateInput, timeSlotSelect].forEach(el => {
+    el.addEventListener("change", () => {
+      const date = dateInput.value;
+      const timeSlotId = timeSlotSelect.value;
+      const params = new URLSearchParams();
+      if (date) params.append("date", date);
+      if (timeSlotId) params.append("time_slot_id", timeSlotId);
+      window.location.href = `<%= new_reservation_path %>?${params.toString()}`;
+    });
+  });
+
+  // Guest count changes → disable tables that cannot fit the guests
+  function updateTableOptions() {
+    const guestCount = parseInt(guestInput.value) || 1;
+    let availableCount = 0;
+
+    Array.from(tableSelect.options).forEach(option => {
+      if (option.value === "") return; // skip the blank placeholder
+
+      const tableId = option.value;
+      const tableCapacity = <%= raw @available_tables.map { |t| [t.id, t.capacity] }.to_h.to_json %>[tableId];
+
+      // Disable option if it can't fit the guest count
+      if (tableCapacity < guestCount) {
+        option.disabled = true;
+      } else {
+        option.disabled = false;
+        availableCount += 1; // count only enabled tables
+      }
+    });
+
+    // Update the blank option text dynamically
+    const blankOption = tableSelect.querySelector("option[value='']");
+    if (blankOption) {
+      blankOption.text = `Select a table (${availableCount} table${availableCount !== 1 ? "s" : ""})`;
+    }
+  }
+  
+  updateTableOptions();
+  guestInput.addEventListener("input", updateTableOptions);
+  dateInput.addEventListener("change", updateTableOptions);
+  timeSlotSelect.addEventListener("change", updateTableOptions);
+
+  // Populate modal before showing
+  const confirmationModalEl = document.getElementById("confirmationModal");
+  confirmationModalEl.addEventListener('show.bs.modal', () => {
+    document.getElementById("confirm_date").textContent = dateInput.value;
+    document.getElementById("confirm_time").textContent = timeSlotSelect.options[timeSlotSelect.selectedIndex].text;
+    document.getElementById("confirm_guests").textContent = guestInput.value;
+    document.getElementById("confirm_table").textContent = tableSelect.options[tableSelect.selectedIndex]?.text || "Not selected";
+    document.getElementById("confirm_request").textContent = document.querySelector("textarea[name='reservation[special_request]']").value;
+  });
+
+  // Submit form after confirmation
+  submitBtn.addEventListener("click", () => {
+    document.getElementById("reservation_form").submit();
+  });
+});
+</script>

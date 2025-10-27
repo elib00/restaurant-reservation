@@ -1,0 +1,38 @@
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Manage Tables</h1>
+    <%= link_to "Add Table", new_admin_table_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if @tables.any? %>
+    <table class="table table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Capacity</th>
+          <th>Location</th>
+          <th>Shape</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @tables.each do |table| %>
+          <tr>
+            <td><%= table.name %></td>
+            <td><%= table.capacity %></td>
+            <td><%= table.location %></td>
+            <td><%= table.shape %></td>
+            <td><%= table.description.presence || "—" %></td>
+            <td>
+              <%= link_to "Edit", edit_admin_table_path(table), class: "btn btn-sm btn-warning" %>
+              <%= link_to "Delete", admin_table_path(table), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-danger" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No tables available. Please add one.</p>
+  <% end %>
+</div>

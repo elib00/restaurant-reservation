@@ -28,4 +28,11 @@ class ApplicationController < ActionController::Base
   def logout_action?
     controller_name == "sessions" && action_name == "destroy"
   end
+
+    # New method for admin-only controllers
+  def require_admin
+    unless current_user&.admin?
+      redirect_to customer_home_path, alert: "Access denied."
+    end
+  end
 end
