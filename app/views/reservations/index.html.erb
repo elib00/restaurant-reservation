@@ -1,0 +1,72 @@
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Your Reservations</h1>
+      <div class="d-flex gap-2">
+        <%= link_to "Book a Reservation", new_reservation_path, class: "btn btn-primary" %>
+        <%= link_to "Calendar", calendar_reservations_path, class: "btn btn-outline-primary" %>
+      </div>
+  </div>
+
+  <% if @reservations.any? %>
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Table</th>
+          <th>Guests</th>
+          <th>Special Request</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |res| %>
+          <% reservation_time = Time.zone.parse("#{res.date} #{res.time_slot.start_time}") %>
+          <tr>
+            <td><%= res.date.strftime("%B %d, %Y") %></td>
+            <td><%= res.time_slot.formatted_range %></td>
+            <td><%= res.table.name %></td>
+            <td><%= res.guest_count %></td>
+            <td><%= res.special_request.presence || "—" %></td>
+            <td>
+              <span class="badge bg-<%= res.cancelled? ? 'secondary' : 'success' %>">
+                <%= res.status.capitalize %>
+              </span>
+            </td>
+            <td>
+              <% if res.active? %>
+                <button type="button" class="btn btn-sm btn-danger" 
+                        data-bs-toggle="modal" data-bs-target="#cancelModal<%= res.id %>"
+                        <%= "disabled" if reservation_time < 2.hours.from_now %>>
+                  Cancel
+                </button>
+
+                <div class="modal fade" id="cancelModal<%= res.id %>" tabindex="-1" aria-labelledby="cancelModalLabel<%= res.id %>" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="cancelModalLabel<%= res.id %>">Cancel Reservation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you want to cancel your reservation for <strong><%= res.date.strftime("%B %d, %Y") %> at <%= res.time_slot.formatted_range %></strong>?
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <%= button_to "Confirm Cancel", reservation_path(res), method: :delete, class: "btn btn-danger" %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>You have no reservations yet.</p>
+    <%= link_to "Book Now", new_reservation_path, class: "btn btn-primary" %>
+  <% end %>
+</div>

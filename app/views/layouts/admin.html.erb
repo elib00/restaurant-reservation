@@ -1,31 +1,74 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>Admin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  <%= javascript_importmap_tags %>
+
+  <style>
+    .nav-link {
+      transition: background-color 0.2s, color 0.2s;
+      border-radius: 0.25rem;
+      color: #333;
+    }
+
+    .nav-link:not(.active):hover {
+      background-color: #e2e6ea;
+      color: #0d6efd;
+    }
+
+    .nav-link.active {
+      background-color: #0d6efd;
+      color: white !important;
+    }
+
+    .nav-link.active:hover {
+      background-color: #0b5ed7;
+      color: white !important;
+    }
+  </style>
 </head>
+
 <body>
   <div class="d-flex">
+    <!-- Sidebar -->
     <aside class="bg-light p-3" style="width: 220px; min-height: 100vh;">
       <h5>Admin</h5>
       <ul class="nav flex-column">
-        <li class="nav-item"><%= link_to "Dashboard", admin_dashboard_path, class: "nav-link" %></li>
-        <li class="nav-item"><%= link_to "Reservations", admin_reservations_path, class: "nav-link" %></li>
-        <li class="nav-item"><%= link_to "Users", admin_users_path, class: "nav-link" %></li>
-        <li class="nav-item"><%= link_to "Logout", logout_path, method: :delete, class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to "Dashboard", admin_dashboard_path, class: "nav-link #{'active' if current_page?(admin_dashboard_path)}" %></li>
+        <li class="nav-item"><%= link_to "Users", admin_users_path, class: "nav-link #{'active' if current_page?(admin_users_path)}" %></li>
+        <li class="nav-item"><%= link_to "Reservations", admin_reservations_path, class: "nav-link #{'active' if current_page?(admin_reservations_path)}" %></li>
+        <li class="nav-item"><%= link_to "Time Slots", admin_time_slots_path, class: "nav-link #{'active' if current_page?(admin_time_slots_path)}" %></li>
+        <li class="nav-item"><%= link_to "Tables", admin_tables_path, class: "nav-link #{'active' if current_page?(admin_tables_path)}" %></li>
+        <li class="nav-item"><%= link_to "Reservation Calendar", calendar_admin_reservations_path, class: "nav-link #{'active' if current_page?(calendar_admin_reservations_path)}" %></li>
+        <li class="nav-item">
+          <%= button_to "Logout", logout_path, method: :delete, class: "btn btn-link nav-link", form_class: "d-inline" %>
+        </li>
       </ul>
     </aside>
 
+    <!-- Main Content -->
     <main class="p-4 flex-grow-1">
-      <% flash.each do |k, v| %>
-        <div class="alert alert-<%= k == "notice" ? "success" : "danger" %>"><%= v %></div>
+      <!-- Flash Messages -->
+      <% flash.each do |key, message| %>
+        <div class="alert alert-<%= key == "notice" ? "success" : "danger" %> alert-dismissible fade show" role="alert">
+          <%= message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
       <% end %>
 
       <%= yield %>
     </main>
   </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

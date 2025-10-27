@@ -1,0 +1,47 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Users Management</h1>
+
+  <% if @users.any? %>
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Contact Number</th>
+          <th>Role</th>
+          <th>Created At</th>
+          <th>Active Reservations</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <% active_reservations = user.reservations.where(status: :active).where("date >= ?", Date.today) %>
+          <tr>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td><%= user.contact_number %></td>
+            <td><%= user.role.capitalize %></td>
+            <td><%= user.created_at.strftime("%B %d, %Y") %></td>
+            <td>
+              <% if active_reservations.any? %>
+                <ul class="mb-0">
+                  <% active_reservations.each do |res| %>
+                    <li>
+                      <%= res.date.strftime("%b %d, %Y") %> -
+                      <%= res.time_slot.formatted_range %> 
+                      (<%= res.guest_count %> guests, Table: <%= res.table.name %>)
+                    </li>
+                  <% end %>
+                </ul>
+              <% else %>
+                —
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No users found.</p>
+  <% end %>
+</div>

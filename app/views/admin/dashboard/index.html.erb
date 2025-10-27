@@ -1,0 +1,46 @@
+<!-- app/views/admin/dashboard/index.html.erb -->
+<div class="container mt-5">
+  <h1 class="mb-4">Admin Dashboard</h1>
+
+  <!-- View Filters -->
+  <div class="mb-4">
+    <div class="btn-group" role="group">
+      <%= link_to "Daily", admin_dashboard_path(view: "daily"), class: "btn btn-outline-primary #{'active' if @view == 'daily'}" %>
+      <%= link_to "Weekly", admin_dashboard_path(view: "weekly"), class: "btn btn-outline-primary #{'active' if @view == 'weekly'}" %>
+      <%= link_to "Monthly", admin_dashboard_path(view: "monthly"), class: "btn btn-outline-primary #{'active' if @view == 'monthly'}" %>
+    </div>
+  </div>
+
+  <% if @reservations.any? %>
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Table</th>
+          <th>Guests</th>
+          <th>Customer</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |res| %>
+          <tr>
+            <td><%= res.date.strftime("%B %d, %Y") %></td>
+            <td><%= res.time_slot&.formatted_range || "N/A" %></td>
+            <td><%= res.table&.name || "N/A" %></td>
+            <td><%= res.guest_count %></td>
+            <td><%= res.user&.name %></td>
+            <td>
+              <span class="badge <%= res.status == 'cancelled' ? 'bg-secondary' : 'bg-success' %>">
+                <%= res.status.capitalize %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No reservations found for this period.</p>
+  <% end %>
+</div>

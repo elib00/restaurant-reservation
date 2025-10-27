@@ -1,0 +1,20 @@
+<%= form_with(model: [:admin, @time_slot], local: true) do |form| %>
+  <div class="mb-3">
+    <%= form.label :start_time, "Start Time", class: "form-label" %>
+    <%= form.time_field :start_time, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :end_time, "End Time", class: "form-label" %>
+    <%= form.time_field :end_time, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :max_tables, "Max Tables", class: "form-label" %>
+    <%= form.number_field :max_tables, min: 1, class: "form-control" %>
+  </div>
+
+  <div class="d-grid">
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %>

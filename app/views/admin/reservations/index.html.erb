@@ -1,0 +1,50 @@
+<div class="container mt-5">
+  <h1 class="mb-4">All Reservations</h1>
+
+  <% if @reservations.any? %>
+    <table class="table table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Table</th>
+          <th>Guests</th>
+          <th>Customer</th>
+          <th>Contact</th>
+          <th>Special Requests</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |res| %>
+          <tr>
+            <td><%= res.date.strftime("%B %d, %Y") %></td>
+            <td><%= res.time_slot.formatted_range %></td>
+            <td><%= res.table.name %></td>
+            <td><%= res.guest_count %></td>
+            <td><%= res.user.name %></td>
+            <td>
+              <div>Email: <%= mail_to res.user.email %></div>
+              <div>Phone: <%= res.user.contact_number %></div>
+            </td>
+            <td><%= res.special_request.presence || "—" %></td>
+            <td>
+              <span class="badge bg-<%= res.cancelled? ? 'secondary' : 'success' %>">
+                <%= res.status.capitalize %>
+              </span>
+            </td>
+            <td>
+              <%= link_to "Edit", edit_admin_reservation_path(res), class: "btn btn-sm btn-warning mb-1" %>
+              <% unless res.cancelled? %>
+                <%= link_to "Cancel", admin_reservation_path(res), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-danger" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No reservations found.</p>
+  <% end %>
+</div>

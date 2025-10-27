@@ -1,0 +1,36 @@
+<div class="row">
+  <% @time_slots.each do |ts| %>
+    <% reservations_count = @reservations_by_slot[ts.id]&.count || 0 %>
+    <% available = ts.max_tables - reservations_count %>
+
+    <% color = if available <= 0
+                 "bg-danger"
+               elsif available <= 2
+                 "bg-warning"
+               else
+                 "bg-success"
+               end %>
+
+    <div class="col-md-3 mb-3">
+      <div class="card <%= color %> text-white">
+        <div class="card-body">
+          <h5 class="card-title"><%= ts.formatted_range %></h5>
+          <p><strong><%= reservations_count %> / <%= ts.max_tables %></strong> booked</p>
+          <% if reservations_count > 0 %>
+            <ul class="mb-0">
+              <% @reservations_by_slot[ts.id].each do |res| %>
+                <li>
+                  <% if res.user %>
+                    <%= res.user.name %> (<%= res.guest_count %> guests)
+                  <% else %>
+                    <%= res.guest_count %> guests
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

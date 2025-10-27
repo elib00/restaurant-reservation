@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  table: one
+  date: 2025-10-27
+  time_slot: one
+  guest_count: 1
+  special_request: MyText
+  status: MyString
+
+two:
+  user: two
+  table: two
+  date: 2025-10-27
+  time_slot: two
+  guest_count: 1
+  special_request: MyText
+  status: MyString
