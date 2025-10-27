@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   before_action :require_login
+  before_action :redirect_admin_to_admin_dashboard, unless: :logout_action?
   helper_method :current_user
   layout :determine_layout
 
@@ -15,5 +16,16 @@ class ApplicationController < ActionController::Base
 
   def determine_layout
     current_user&.admin? ? "admin" : "application"
+  end
+
+  def redirect_admin_to_admin_dashboard
+    return unless current_user&.admin?
+    unless request.path.start_with?("/admin")
+      redirect_to admin_dashboard_path
+    end
+  end
+
+  def logout_action?
+    controller_name == "sessions" && action_name == "destroy"
   end
 end
