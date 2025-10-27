@@ -1,7 +1,5 @@
 # Clear existing data (optional, for testing)
-Reservation.destroy_all
 Table.destroy_all
-TimeSlot.destroy_all
 User.destroy_all
 
 # --- Users ---
@@ -32,30 +30,3 @@ tables = [
 ]
 
 tables.each { |t| Table.create!(t) }
-
-# --- Time Slots ---
-time_slots = [
-  # { start_time: "11:00", end_time: "12:00", max_tables: 4 },
-  # { start_time: "12:00", end_time: "13:00", max_tables: 4 },
-  # { start_time: "13:00", end_time: "14:00", max_tables: 4 },
-  # { start_time: "18:00", end_time: "19:00", max_tables: 4 },
-  # { start_time: "19:00", end_time: "20:00", max_tables: 4 }
-]
-
-time_slots.each { |ts| TimeSlot.create!(ts) }
-
-# --- Sample Reservation ---
-# Find the new table named 'Orchid' for the reservation
-orchid_table = Table.find_by(name: "Orchid")
-
-Reservation.create!(
-  user: customer,
-  table: orchid_table,
-  date: Date.today,
-  time_slot: TimeSlot.first,
-  guest_count: 2,
-  special_request: "Window seat please",
-  status: "active"
-)
-
-puts "✅ Seed data created successfully!"
