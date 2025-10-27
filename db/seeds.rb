@@ -38,8 +38,8 @@ time_slots = [
   # { start_time: "11:00", end_time: "12:00", max_tables: 4 },
   # { start_time: "12:00", end_time: "13:00", max_tables: 4 },
   # { start_time: "13:00", end_time: "14:00", max_tables: 4 },
-  { start_time: "18:00", end_time: "19:00", max_tables: 4 },
-  { start_time: "19:00", end_time: "20:00", max_tables: 4 }
+  # { start_time: "18:00", end_time: "19:00", max_tables: 4 },
+  # { start_time: "19:00", end_time: "20:00", max_tables: 4 }
 ]
 
 time_slots.each { |ts| TimeSlot.create!(ts) }
